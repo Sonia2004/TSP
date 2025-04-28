@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TSP con Hill Climbing</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #d7f0f3;
+            color: rgb(0, 0, 0);
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: rgba(6, 169, 190, 0.15);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgb(26, 4, 219);
+            backdrop-filter: blur(10px);
+        }
+
+        label {
+            font-size: 18px;
+            display: block;
+            margin-top: 10px;
+        }
+
+        select, button {
+            width: 80%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            background: #00A8E8;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        button:hover {
+            transform: scale(1.1);
+            box-shadow: 0px 4px 10px rgba(0, 168, 232, 0.8);
+        }
+
+        .reset {
+            background: #DC3545;
+        }
+
+        .reset:hover {
+            box-shadow: 0px 4px 10px rgba(220, 53, 69, 0.8);
+        }
+
+        .result {
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: 20px;
+            color: #00A8E8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TSP con Hill Climbing</h1>
+        <label for="origen">Selecciona la ciudad origen:</label>
+        <select id="origen">
+            <option value="Jiloyork">Jiloyork</option>
+            <option value="Toluca">Toluca</option>
+            <option value="Atlacomulco">Atlacomulco</option>
+            <option value="Guadalajara">Guadalajara</option>
+            <option value="Monterrey">Monterrey</option>
+            <option value="QuintanaRoo">Quintana Roo</option>
+            <option value="Michohacan">Michoacán</option>
+            <option value="Aguascalientes">Aguascalientes</option>
+            <option value="CDMX">CDMX</option>
+            <option value="QRO">Querétaro</option>
+        </select>
+
+        <div class="small-buttons">
+            <button class="reset" onclick="nuevoCalculo()">Nuevo Cálculo</button>
+        </div>
+
+        <button onclick="calcularDistancia()">Calcular Distancia</button>
+        <p class="result" id="resultado"></p>
+    </div>
+
+    <script>
+        function nuevoCalculo() {
+            document.getElementById("origen").selectedIndex = 0;
+            document.getElementById("resultado").innerText = "";
+        }
+
+        function calcularDistancia() {
+            const origen = document.getElementById("origen").value;
+
+            fetch('http://127.0.0.1:5000/calcular', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ origen })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById("resultado").innerText = data.error;
+                } else {
+                    document.getElementById("resultado").innerText = `Ruta: ${data.ruta.join(" ➝ ")}\nDistancia total: ${data.distancia_total}`;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
